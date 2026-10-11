@@ -43,10 +43,6 @@ int main(int argc, char *argv[]) {
   char *host = argv[1];
   char *port = argv[2];
   uint32_t id = atoi(argv[3]);
-  if (id > 65534 || id < 1) {
-    printf("Error: ID should be a positive integer less than 65,535\n");
-    exit(1);
-  }
   id = htonl(id);
   char buf[1201];
   int s;
@@ -83,6 +79,7 @@ int main(int argc, char *argv[]) {
       while ((e = readdir(d)) != NULL)
         if (e->d_type == DT_REG) {
           o = strlen(e->d_name) + 1;
+          // stop adding files if request would be too long
           if (offset + o > 1200)
             break;
           memcpy(buf + offset, e->d_name, strlen(e->d_name) + 1);
