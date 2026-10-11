@@ -34,12 +34,6 @@ int lookup_and_connect(const char *host, const char *service);
 int sendall(int s, char *buf, int len);
 int recvall(int s, char *buf, int len);
 
-void printHex(char *buf, uint32_t count) {
-  for (uint32_t i = 0; i < count; i++)
-    printf("%02X|", (unsigned char)buf[i]);
-  printf("\n");
-}
-
 int main(int argc, char *argv[]) {
   if (argc < 4) {
     printf("usage: %s <registry_location> <port> <id>\n", argv[0]);
@@ -83,8 +77,8 @@ int main(int argc, char *argv[]) {
       d = opendir("SharedFiles");
       if (!d) {
         printf("Error while opening folder SharedFiles/\n");
-        close(s);
-        exit(1);
+        closedir(d);
+        continue;
       }
       while ((e = readdir(d)) != NULL)
         if (e->d_type == DT_REG) {
@@ -134,7 +128,7 @@ int main(int argc, char *argv[]) {
     } else if (!strcmp(buf, "EXIT")) {
       break;
     } else {
-      printf("Please enter a valid command: {JOIN|SEARCH|EXIT}\n");
+      printf("Please enter a valid command: {JOIN|PUBLISH|SEARCH|EXIT}\n");
       continue;
     }
   }
